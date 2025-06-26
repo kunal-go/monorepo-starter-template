@@ -3,8 +3,8 @@ import { Transaction } from "../../db";
 import { users } from "../../db/schema";
 import { getEnv } from "../../env.config";
 import { checkUserEmailAvailability } from "./check-user-email-availability";
-import { createVerificationRequest } from "./create-verification-request";
 import { deleteUnverifiedUsers } from "./delete-unverified-users";
+import { createVerificationRequest } from "./verification/create-verification-request";
 
 export async function createUser(
   tx: Transaction,

@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1750956751972,
-      "tag": "0000_wet_scorpion",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1750957798742,
-      "tag": "0001_concerned_raider",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1750963422821,
-      "tag": "0002_flowery_wild_child",
+      "when": 1750967016948,
+      "tag": "0000_quick_romulus",
       "breakpoints": true
     }
   ]

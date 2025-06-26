@@ -1,8 +1,8 @@
 import { hash } from "bcrypt";
-import { getValidity } from "../../common/utils/date";
-import { generateOtpCode } from "../../common/utils/otp";
-import { Transaction } from "../../db";
-import { verificationRequests } from "../../db/schema";
+import { getValidity } from "../../../common/utils/date";
+import { generateOtpCode } from "../../../common/utils/otp";
+import { Transaction } from "../../../db";
+import { verificationRequests } from "../../../db/schema";
 
 export async function createVerificationRequest(
   tx: Transaction,

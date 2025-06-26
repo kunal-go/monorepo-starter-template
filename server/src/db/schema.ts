@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -14,11 +14,12 @@ export const users = pgTable("user", {
 
 export type User = typeof users.$inferSelect;
 
-export const usersRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   verificationRequest: one(verificationRequests),
+  userSessions: many(userSessions),
 }));
 
-export const verificationRequests = pgTable("verification_request", {
+export const verificationRequests = pgTable("verification_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   userId: uuid("user_id")
@@ -39,3 +40,21 @@ export const verificationRequestsRelations = relations(
     }),
   })
 );
+
+export const userSessions = pgTable("user_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+  validTill: timestamp("valid_till").notNull(),
+});
+
+export type UserSession = typeof userSessions.$inferSelect;
+
+export const userSessionsRelations = relations(userSessions, ({ one }) => ({
+  user: one(users, {
+    fields: [userSessions.userId],
+    references: [users.id],
+  }),
+}));

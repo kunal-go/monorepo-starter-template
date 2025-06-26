@@ -16,6 +16,8 @@ const envSchema = z.object({
 
   MAIL_CATCHER_VIEW_PORT: z.coerce.number(),
   MAIL_CATCHER_SERVER_PORT: z.coerce.number(),
+
+  JWT_SECRET: z.string(),
 });
 
 type EnvVar = z.infer<typeof envSchema>;

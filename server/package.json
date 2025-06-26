@@ -7,8 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down",
+    "docker:up": "docker compose -p \"starter-template\" up",
+    "docker:down": "docker compose -p \"starter-template\" up",
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio"
   },

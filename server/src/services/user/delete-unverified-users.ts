@@ -1,11 +1,11 @@
-import { and, eq, gt, notInArray } from "drizzle-orm";
+import { and, eq, lt, notInArray } from "drizzle-orm";
 import { db } from "../../db";
 import { users, verificationRequests } from "../../db/schema";
 
 export async function deleteUnverifiedUsers() {
   await db
     .delete(verificationRequests)
-    .where(gt(verificationRequests.validTill, new Date()));
+    .where(lt(verificationRequests.validTill, new Date()));
 
   const pendingRequests = await db
     .select({ userId: verificationRequests.userId })
