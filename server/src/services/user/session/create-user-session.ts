@@ -1,11 +1,11 @@
+import { desc, eq, inArray } from "drizzle-orm";
 import { getValidity } from "../../../common/utils/date";
-import { Transaction } from "../../../db";
+import { WriteTransaction } from "../../../db";
 import { userSessions } from "../../../db/schema";
 import { deleteExpiredUserSessions } from "./delete-expired-user-sessions";
-import { eq, desc, inArray } from "drizzle-orm";
 
 export async function createUserSession(
-  tx: Transaction,
+  tx: WriteTransaction,
   payload: { userId: string }
 ) {
   await deleteExpiredUserSessions();

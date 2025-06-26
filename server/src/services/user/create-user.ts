@@ -1,5 +1,5 @@
 import { hash } from "bcrypt";
-import { Transaction } from "../../db";
+import { WriteTransaction } from "../../db";
 import { users } from "../../db/schema";
 import { getEnv } from "../../env.config";
 import { checkUserEmailAvailability } from "./check-user-email-availability";
@@ -7,7 +7,7 @@ import { deleteUnverifiedUsers } from "./delete-unverified-users";
 import { createVerificationRequest } from "./verification/create-verification-request";
 
 export async function createUser(
-  tx: Transaction,
+  tx: WriteTransaction,
   payload: { email: string; password: string }
 ) {
   await deleteUnverifiedUsers();

@@ -1,10 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { count, eq } from "drizzle-orm";
-import { Transaction } from "../../db";
+import { ReadTransaction } from "../../db";
 import { users } from "../../db/schema";
 
 export async function checkUserEmailAvailability(
-  tx: Transaction,
+  tx: ReadTransaction,
   payload: { email: string }
 ) {
   const userCount = await tx

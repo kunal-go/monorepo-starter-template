@@ -19,10 +19,10 @@ export async function migrateDb() {
   await migrate(db, { migrationsFolder: "./drizzle" });
 }
 
-export type Transaction =
-  | PgTransaction<
-      NodePgQueryResultHKT,
-      Record<string, never>,
-      ExtractTablesWithRelations<Record<string, never>>
-    >
-  | typeof db;
+export type WriteTransaction = PgTransaction<
+  NodePgQueryResultHKT,
+  Record<string, never>,
+  ExtractTablesWithRelations<Record<string, never>>
+>;
+
+export type ReadTransaction = WriteTransaction | typeof db;

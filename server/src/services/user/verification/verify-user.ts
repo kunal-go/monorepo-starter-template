@@ -1,12 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
-import { Transaction } from "../../../db";
+import { WriteTransaction } from "../../../db";
 import { users, verificationRequests } from "../../../db/schema";
 import { deleteUnverifiedUsers } from "../delete-unverified-users";
 
 export async function verifyUser(
-  tx: Transaction,
+  tx: WriteTransaction,
   payload: { requestId: string; otp: string }
 ) {
   await deleteUnverifiedUsers();

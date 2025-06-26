@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { compare } from "bcrypt";
-import { eq, lt, desc, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../../../../db";
-import { users, userSessions } from "../../../../db/schema";
+import { users } from "../../../../db/schema";
 import { createAccessToken } from "../../../../providers/jwt";
 import { createUserSession } from "../../../../services/user/session/create-user-session";
 import { procedure } from "../../../trpc";

@@ -1,11 +1,11 @@
 import { hash } from "bcrypt";
 import { getValidity } from "../../../common/utils/date";
 import { generateOtpCode } from "../../../common/utils/otp";
-import { Transaction } from "../../../db";
+import { WriteTransaction } from "../../../db";
 import { verificationRequests } from "../../../db/schema";
 
 export async function createVerificationRequest(
-  tx: Transaction,
+  tx: WriteTransaction,
   payload: { userId: string }
 ) {
   const otpCode = generateOtpCode();
