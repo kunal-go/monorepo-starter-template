@@ -15,6 +15,13 @@
       "when": 1750957798742,
       "tag": "0001_concerned_raider",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750963422821,
+      "tag": "0002_flowery_wild_child",
+      "breakpoints": true
     }
   ]
 }

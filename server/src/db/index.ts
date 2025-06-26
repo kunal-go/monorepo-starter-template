@@ -1,5 +1,7 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { ExtractTablesWithRelations } from "drizzle-orm";
+import { drizzle, NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { PgTransaction } from "drizzle-orm/pg-core";
 import { getEnv } from "../env.config";
 
 export const db = drizzle({
@@ -16,3 +18,11 @@ export const db = drizzle({
 export async function migrateDb() {
   await migrate(db, { migrationsFolder: "./drizzle" });
 }
+
+export type Transaction =
+  | PgTransaction<
+      NodePgQueryResultHKT,
+      Record<string, never>,
+      ExtractTablesWithRelations<Record<string, never>>
+    >
+  | typeof db;

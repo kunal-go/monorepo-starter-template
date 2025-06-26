@@ -2,13 +2,20 @@ import "dotenv/config";
 import { z } from "zod";
 
 const envSchema = z.object({
-  NODE_ENV: z.string().default("development"),
-  PORT: z.coerce.number().default(3000),
-  DB_HOST: z.string().default("localhost"),
-  DB_PORT: z.coerce.number().default(5432),
-  DB_USERNAME: z.string().default("postgres"),
-  DB_PASSWORD: z.string().default("postgres"),
-  DB_NAME: z.string().default("starter-template"),
+  NODE_ENV: z.string(),
+  PORT: z.coerce.number(),
+  TZ: z.string(),
+
+  DB_HOST: z.string(),
+  DB_PORT: z.coerce.number(),
+  DB_USERNAME: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_NAME: z.string(),
+
+  SEED_INSIDER_EMAIL: z.string().email().toLowerCase(),
+
+  MAIL_CATCHER_VIEW_PORT: z.coerce.number(),
+  MAIL_CATCHER_SERVER_PORT: z.coerce.number(),
 });
 
 type EnvVar = z.infer<typeof envSchema>;

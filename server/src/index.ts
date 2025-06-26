@@ -1,10 +1,10 @@
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
+import { migrateDb } from "./db";
 import { getEnv } from "./env.config";
 import { createContext } from "./trpc/context";
-import { appRouter } from "./trpc/router";
-import { migrateDb } from "./db";
+import { appRouter } from "./trpc/routers";
 
 const app = new Hono();
 
@@ -13,10 +13,10 @@ app.use("/trpc/*", trpcServer({ router: appRouter, createContext }));
 await migrateDb();
 
 serve({ fetch: app.fetch, port: getEnv("PORT") }, (info) => {
+  console.log("--------------------------------");
   console.log(
-    `Server is running on http://localhost:${info.port} in ${getEnv(
-      "NODE_ENV"
-    )} mode`
+    `[${new Date().toLocaleString()}] TRPC Server is running on http://localhost:${
+      info.port
+    }/trpc`
   );
-  console.log(`TRPC Server is running on http://localhost:${info.port}/trpc`);
 });
