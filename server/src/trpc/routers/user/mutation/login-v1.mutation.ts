@@ -6,14 +6,14 @@ import { db } from "../../../../db";
 import { users } from "../../../../db/schema";
 import { createAccessToken } from "../../../../providers/jwt";
 import { createUserSession } from "../../../../services/user/session/create-user-session";
-import { procedure } from "../../../trpc";
+import { publicProcedure } from "../../../trpc";
 
 const inputSchema = z.object({
   email: z.string().trim().email().toLowerCase(),
   password: z.string().min(8).max(100),
 });
 
-export const loginV1Mutation = procedure
+export const loginV1Mutation = publicProcedure
   .input(inputSchema)
   .mutation(async ({ input }) => {
     const [user] = await db

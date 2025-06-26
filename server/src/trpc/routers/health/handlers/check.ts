@@ -1,6 +1,6 @@
-import { procedure } from "../../../trpc";
+import { publicProcedure } from "../../../trpc";
 
-export const check = procedure.query(() => {
+export const check = publicProcedure.query(() => {
   return {
     status: "ok",
     timestamp: new Date().toISOString(),

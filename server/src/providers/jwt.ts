@@ -13,7 +13,7 @@ export async function createAccessToken(payload: AccessTokenPayload) {
 
 export async function verifyAccessToken(token: string) {
   try {
-    return await verify(token, getEnv("JWT_SECRET"));
+    return (await verify(token, getEnv("JWT_SECRET"))) as AccessTokenPayload;
   } catch (err) {
     if (err instanceof JwtTokenExpired) {
       throw new TRPCError({
