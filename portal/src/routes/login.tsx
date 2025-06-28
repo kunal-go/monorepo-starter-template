@@ -1,6 +1,4 @@
-import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Card,
   CardContent,
@@ -8,10 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { trpc } from '@/lib/trpc'
+import { Input } from '@/components/ui/input'
+import { trpc } from '@/contracts/trpc'
 import { auth } from '@/lib/auth'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 interface LoginFormData {
   email: string
@@ -24,7 +24,6 @@ export const Route = createFileRoute('/login')({
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
 
   const {
     register,

@@ -2,8 +2,8 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
-import { trpc } from '@/lib/trpc'
-import { trpcClient } from '@/lib/trpc-client'
+import { trpc } from '@/contracts/trpc'
+import { trpcClient } from '@/contracts/trpc-client'
 
 export const Route = createRootRoute({
   component: RootComponent,
