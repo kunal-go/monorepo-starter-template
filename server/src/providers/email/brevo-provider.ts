@@ -1,14 +1,28 @@
-import axios, { AxiosInstance } from "axios";
-import { getEnv } from "../../env.config";
+import axios from "axios";
 import { EmailData, EmailProvider, EmailResult } from "./types";
 
+type Sender = string | { name: string; address: string };
+
 export class BrevoProvider implements EmailProvider {
+  private sender: Sender;
+  private apiKey: string;
+
+  constructor(config: { apiKey: string; sender: Sender }) {
+    this.apiKey = config.apiKey;
+    this.sender = config.sender;
+  }
+
   async send(emailData: EmailData): Promise<EmailResult> {
-    const client = this.getAxiosClient();
+    const client = axios.create({
+      baseURL: "https://api.brevo.com/v3",
+      headers: {
+        "api-key": this.apiKey,
+      },
+    });
 
     try {
       const payload = {
-        sender: { email: getEnv("FROM_EMAIL") },
+        sender: this.sender,
         to: Array.isArray(emailData.to)
           ? emailData.to.map((email) => ({ email }))
           : [{ email: emailData.to }],
@@ -41,16 +55,5 @@ export class BrevoProvider implements EmailProvider {
           : "Unknown error",
       };
     }
-  }
-
-  private getAxiosClient(): AxiosInstance {
-    const apiKey = ""; // getEnv("BREVO_API_KEY")
-
-    return axios.create({
-      baseURL: "https://api.brevo.com/v3",
-      headers: {
-        "api-key": apiKey,
-      },
-    });
   }
 }

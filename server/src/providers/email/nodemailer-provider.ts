@@ -1,21 +1,39 @@
-import { Transporter } from "nodemailer";
+import { createTransport, Transporter } from "nodemailer";
 import { getEnv } from "../../env.config";
 import { EmailData, EmailProvider, EmailResult } from "./types";
 
-export class NodemailerProvider implements EmailProvider {
-  async send(emailData: EmailData): Promise<EmailResult> {
-    const transporter = this.getTransporter();
-    const name = getEnv("FROM_EMAIL_NAME");
-    const address = getEnv("FROM_EMAIL");
+type Sender = string | { name: string; address: string };
 
+export class NodemailerProvider implements EmailProvider {
+  private transporter: Transporter;
+  private sender: Sender;
+
+  constructor(config: {
+    host: string;
+    port: number;
+    secure?: boolean;
+    auth?: { user: string; pass: string };
+    sender: Sender;
+  }) {
+    this.sender = config.sender;
+
+    const mailCatcherServerPort = getEnv("MAIL_CATCHER_SERVER_PORT");
+    if (!mailCatcherServerPort) {
+      throw new Error("Mail catcher server port not configured in env");
+    }
+
+    this.transporter = createTransport({
+      host: config.host,
+      port: config.port,
+      secure: config.secure,
+      auth: config.auth,
+    });
+  }
+
+  async send(emailData: EmailData): Promise<EmailResult> {
     try {
-      const info = await transporter.sendMail({
-        from: name
-          ? {
-              name: getEnv("FROM_EMAIL_NAME"),
-              address: getEnv("FROM_EMAIL"),
-            }
-          : address,
+      const info = await this.transporter.sendMail({
+        from: this.sender,
         to: Array.isArray(emailData.to)
           ? emailData.to.join(", ")
           : emailData.to,
@@ -44,10 +62,5 @@ export class NodemailerProvider implements EmailProvider {
         error: error instanceof Error ? error.message : "Unknown error",
       };
     }
-  }
-
-  private getTransporter(): Transporter {
-    // TODO: Implement production nodemailer transporter
-    throw new Error("Not implemented");
   }
 }
