@@ -19,4 +19,11 @@ serve({ fetch: app.fetch, port: getEnv("PORT") }, (info) => {
       info.port
     }/trpc`
   );
+  if (getEnv("NODE_ENV") !== "production") {
+    console.log(
+      `[${new Date().toLocaleString()}] Mail catcher UI is running on http://localhost:${getEnv(
+        "MAIL_CATCHER_VIEW_PORT"
+      )}`
+    );
+  }
 });

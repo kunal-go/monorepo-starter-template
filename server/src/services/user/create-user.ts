@@ -24,7 +24,7 @@ export async function createUser(
     })
     .returning();
 
-  const request = await createVerificationRequest(tx, { userId: user.id });
+  const request = await createVerificationRequest(tx, { user });
 
   return { user, request };
 }
