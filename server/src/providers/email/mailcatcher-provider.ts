@@ -1,10 +1,11 @@
-import { Transporter } from "nodemailer";
+import { createTransport, Transporter } from "nodemailer";
 import { getEnv } from "../../env.config";
 import { EmailData, EmailProvider, EmailResult } from "./types";
 
-export class NodemailerProvider implements EmailProvider {
+export class MailCatcherProvider implements EmailProvider {
   async send(emailData: EmailData): Promise<EmailResult> {
     const transporter = this.getTransporter();
+
     const name = getEnv("FROM_EMAIL_NAME");
     const address = getEnv("FROM_EMAIL");
 
@@ -47,7 +48,15 @@ export class NodemailerProvider implements EmailProvider {
   }
 
   private getTransporter(): Transporter {
-    // TODO: Implement production nodemailer transporter
-    throw new Error("Not implemented");
+    const mailCatcherServerPort = getEnv("MAIL_CATCHER_SERVER_PORT");
+    if (!mailCatcherServerPort) {
+      throw new Error("Mail catcher server port not configured in env");
+    }
+
+    return createTransport({
+      host: "localhost",
+      port: mailCatcherServerPort,
+      ignoreTLS: true,
+    });
   }
 }
