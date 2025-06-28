@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "start": "node dist/index.js",
     "docker:up": "docker compose -p \"starter-template\" up",
     "docker:down": "docker compose -p \"starter-template\" up",
@@ -13,26 +13,26 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.4",
-    "@hono/trpc-server": "^0.4.0",
-    "@trpc/server": "^11.4.2",
-    "axios": "^1.10.0",
-    "bcrypt": "^6.0.0",
-    "dayjs": "^1.11.13",
-    "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.44.2",
-    "hono": "^4.8.3",
-    "nodemailer": "^7.0.3",
-    "pg": "^8.16.2",
-    "zod": "^3.25.67"
+    "@hono/node-server": "1.14.4",
+    "@hono/trpc-server": "0.4.0",
+    "@trpc/server": "11.4.3",
+    "axios": "1.10.0",
+    "bcrypt": "6.0.0",
+    "dayjs": "1.11.13",
+    "dotenv": "16.5.0",
+    "drizzle-orm": "0.44.2",
+    "hono": "4.8.3",
+    "nodemailer": "7.0.3",
+    "pg": "8.16.2",
+    "zod": "3.25.67"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/node": "^20.11.17",
-    "@types/nodemailer": "^6.4.17",
-    "@types/pg": "^8.15.4",
-    "drizzle-kit": "^0.31.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
+    "@types/bcrypt": "5.0.2",
+    "@types/node": "20.11.17",
+    "@types/nodemailer": "6.4.17",
+    "@types/pg": "8.15.4",
+    "drizzle-kit": "0.31.2",
+    "tsx": "4.7.1",
+    "typescript": "5.7.2"
   }
 }

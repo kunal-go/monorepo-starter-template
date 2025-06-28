@@ -11,7 +11,8 @@
     "noUnusedParameters": true,
     "types": ["node"],
     "outDir": "./dist",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "composite": true
   },
   "exclude": ["node_modules"]
 }

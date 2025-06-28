@@ -5,9 +5,11 @@ import { migrateDb } from "./db";
 import { getEnv } from "./env.config";
 import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/routers";
+import { cors } from "hono/cors";
 
 const app = new Hono();
 
+app.use("*", cors());
 app.use("/trpc/*", trpcServer({ router: appRouter, createContext }));
 
 await migrateDb();
