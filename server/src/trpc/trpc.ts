@@ -2,11 +2,12 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { verifyAccessToken } from "../providers/jwt";
 import { authorizeSession } from "../services/user/authorize-session";
 import { Context } from "./context";
+import { rateLimiterMiddleware } from "./middlewares/rate-limiter";
 
-const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create();
 
 export const createTRPCRouter = t.router;
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(rateLimiterMiddleware);
 
 export const privateProcedure = t.procedure.use(async ({ ctx, next }) => {
   const authHeader =
