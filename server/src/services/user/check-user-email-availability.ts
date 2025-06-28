@@ -1,4 +1,4 @@
-import { TRPCError } from "@trpc/server";
+import { UnprocessableEntityError } from "../../common/errors";
 import { count, eq } from "drizzle-orm";
 import { ReadTransaction } from "../../db";
 import { users } from "../../db/schema";
@@ -13,9 +13,6 @@ export async function checkUserEmailAvailability(
     .where(eq(users.email, payload.email.toLowerCase()));
 
   if (userCount[0].count > 0) {
-    throw new TRPCError({
-      code: "UNPROCESSABLE_CONTENT",
-      message: "Email already in use",
-    });
+    throw new UnprocessableEntityError("Email already in use");
   }
 }

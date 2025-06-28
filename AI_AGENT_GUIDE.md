@@ -13,10 +13,11 @@ This repository is a **monorepo starter template** using Yarn workspaces, design
 - **API Layer:** [tRPC](https://trpc.io/) (type-safe APIs)
 - **Database ORM:** [Drizzle ORM](https://orm.drizzle.team/) (with PostgreSQL)
 - **Database Migrations:** drizzle-kit
-- **Authentication:** bcrypt (password hashing)
+- **Authentication:** bcrypt (password hashing), JWT tokens
 - **Validation:** zod (schema validation)
 - **Date Utilities:** dayjs
 - **Environment Management:** dotenv
+- **Error Handling:** Custom CoreError system with protocol-agnostic design
 - **Other:** Typescript, tsx (for dev), Docker Compose (for local DB)
 
 ---
@@ -29,15 +30,21 @@ monorepo-starter-template/
   ├── server/                # Backend service
   │   ├── package.json
   │   ├── README.md
+  │   ├── docker-compose.yaml # Local PostgreSQL setup
   │   ├── drizzle/           # DB migrations & metadata
   │   ├── drizzle.config.ts  # Drizzle ORM config
   │   └── src/
   │       ├── index.ts       # Entry point, server bootstrap
   │       ├── env.config.ts  # Env variable loader
   │       ├── db/            # DB connection & schema
-  │       ├── common/        # Shared utilities
+  │       ├── common/        # Shared utilities & error system
+  │       │   ├── errors.ts  # Custom error classes & utilities
+  │       │   └── utils/     # Date, OTP utilities
   │       ├── services/      # Business logic (e.g., user)
+  │       ├── providers/     # External integrations (JWT, email)
   │       └── trpc/          # API routers, context, procedures
+  │           ├── utils/     # Error mapping utilities
+  │           └── routers/   # API endpoints
   └── README.md              # Monorepo overview
 ```
 
@@ -56,20 +63,78 @@ monorepo-starter-template/
 - **Migrations:** SQL files in `drizzle/`, managed by drizzle-kit.
 - **Config:** `drizzle.config.ts` (uses env vars for DB credentials).
 
+### Error Handling System
+
+#### CoreError Classes (`src/common/errors.ts`)
+
+The application uses a unified error handling system with custom error classes:
+
+```typescript
+// Base error class
+abstract class CustomError extends Error {
+  public readonly statusCode: number;
+  public readonly code: string;
+  public readonly isOperational: boolean;
+  public readonly details?: Record<string, any>;
+}
+
+// Specific error types
+BadRequestError(400);
+UnauthorisedError(401);
+ForbiddenError(403);
+NotFoundError(404);
+ConflictError(409);
+UnprocessableEntityError(422);
+TooManyRequestsError(429);
+InternalServerError(500);
+BadGatewayError(502);
+ServiceUnavailableError(503);
+```
+
+#### Domain-Specific Errors
+
+```typescript
+DatabaseError;
+DatabaseConnectionError;
+ValidationError;
+AuthenticationError;
+AuthorizationError;
+BusinessLogicError;
+ExternalServiceError;
+```
+
+#### Error Utilities
+
+- `isOperationalError()`: Check if error is expected vs unexpected
+- `getStatusCode()`: Extract HTTP status code from any error
+- `createErrorResponse()`: Format errors for different protocols (tRPC, REST, GraphQL, gRPC)
+- `ErrorCodes` enum: Centralized error codes
+
 ### API Layer
 
 - **Framework:** tRPC, integrated with Hono.
 - **Routers:** Defined in `src/trpc/routers/`
-  - `user/`: User-related endpoints (e.g., registration).
-  - `health/`: Health check endpoint.
+  - `user/`: User-related endpoints (registration, login, verification, profile)
+  - `health/`: Health check endpoint
 - **Procedures:** Use zod for input validation.
+- **Error Handling:** All handlers use try-catch with `mapToTrpcError()`
 
-### Services
+#### tRPC Error Handling Pattern
 
-- **Location:** `src/services/user/`
-- **Responsibilities:** User creation, email availability check, verification request, cleanup of unverified users.
+All tRPC handlers follow this consistent pattern:
 
-### Utilities
+```typescript
+export const handler = publicProcedure
+  .input(schema)
+  .mutation(async ({ input }) => {
+    try {
+      // Handler logic here
+      return result;
+    } catch (err) {
+      throw mapToTrpcError(err);
+    }
+  });
+```
 
 - **Location:** `src/common/utils/`
 - **Examples:** Date calculations (`date.ts`), OTP generation (`otp.ts`).

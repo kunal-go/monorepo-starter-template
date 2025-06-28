@@ -1,12 +1,13 @@
-import { TRPCError } from "@trpc/server";
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { ForbiddenError } from "../../../../common/errors";
 import { db } from "../../../../db";
 import { users } from "../../../../db/schema";
 import { createAccessToken } from "../../../../providers/jwt";
 import { createUserSession } from "../../../../services/user/session/create-user-session";
 import { publicProcedure } from "../../../trpc";
+import { mapToTrpcError } from "../../../utils";
 
 const inputSchema = z.object({
   email: z.string().trim().email().toLowerCase(),
@@ -16,39 +17,37 @@ const inputSchema = z.object({
 export const loginV1Mutation = publicProcedure
   .input(inputSchema)
   .mutation(async ({ input }) => {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, input.email));
+    try {
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, input.email));
 
-    if (!user) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Invalid email or password",
+      if (!user) {
+        throw new ForbiddenError("Invalid email or password");
+      }
+
+      if (!user.isVerified) {
+        throw new ForbiddenError("Invalid email or password");
+      }
+
+      const isPasswordValid = await compare(
+        input.password,
+        user.hashedPassword
+      );
+      if (!isPasswordValid) {
+        throw new ForbiddenError("Invalid email or password");
+      }
+
+      const { session } = await db.transaction(async (tx) => {
+        return await createUserSession(tx, { userId: user.id });
       });
-    }
 
-    if (!user.isVerified) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Invalid email or password",
+      const accessToken = await createAccessToken({
+        sessionId: session.id,
       });
+      return { accessToken };
+    } catch (err) {
+      throw mapToTrpcError(err);
     }
-
-    const isPasswordValid = await compare(input.password, user.hashedPassword);
-    if (!isPasswordValid) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Invalid email or password",
-      });
-    }
-
-    const { session } = await db.transaction(async (tx) => {
-      return await createUserSession(tx, { userId: user.id });
-    });
-
-    const accessToken = await createAccessToken({
-      sessionId: session.id,
-    });
-    return { accessToken };
   });
