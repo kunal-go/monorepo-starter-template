@@ -1,4 +1,4 @@
-import { TRPCError } from "@trpc/server";
+import { UnauthorisedError } from "../common/errors";
 import { sign, verify } from "hono/jwt";
 import { JwtTokenExpired } from "hono/utils/jwt/types";
 import { getEnv } from "../env.config";
@@ -16,15 +16,9 @@ export async function verifyAccessToken(token: string) {
     return (await verify(token, getEnv("JWT_SECRET"))) as AccessTokenPayload;
   } catch (err) {
     if (err instanceof JwtTokenExpired) {
-      throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Access token expired",
-      });
+      throw new UnauthorisedError("Access token expired");
     }
 
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Invalid access token",
-    });
+    throw new UnauthorisedError("Invalid access token");
   }
 }

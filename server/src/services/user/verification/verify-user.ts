@@ -1,4 +1,7 @@
-import { TRPCError } from "@trpc/server";
+import {
+  BadRequestError,
+  UnprocessableEntityError,
+} from "../../../common/errors";
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import { WriteTransaction } from "../../../db";
@@ -17,26 +20,19 @@ export async function verifyUser(
     .where(eq(verificationRequests.id, payload.requestId));
 
   if (!request) {
-    throw new TRPCError({
-      code: "UNPROCESSABLE_CONTENT",
-      message: "Verification request expired or invalid",
-    });
+    throw new UnprocessableEntityError(
+      "Verification request expired or invalid"
+    );
   }
 
   const isExpired = new Date(request.validTill) < new Date();
   if (isExpired) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Verification request has expired",
-    });
+    throw new BadRequestError("Verification request has expired");
   }
 
   const isOtpValid = await compare(payload.otp, request.hashedOtp);
   if (!isOtpValid) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Invalid OTP",
-    });
+    throw new BadRequestError("Invalid OTP");
   }
 
   const [user] = await tx

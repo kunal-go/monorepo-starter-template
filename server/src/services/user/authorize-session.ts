@@ -1,4 +1,4 @@
-import { TRPCError } from "@trpc/server";
+import { UnauthorisedError } from "../../common/errors";
 import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import { userSessions } from "../../db/schema";
@@ -10,10 +10,10 @@ export async function authorizeSession(sessionId: string) {
     .where(eq(userSessions.id, sessionId));
 
   if (!session) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Session not found" });
+    throw new UnauthorisedError("Session not found");
   }
   if (new Date(session.validTill) < new Date()) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Session expired" });
+    throw new UnauthorisedError("Session expired");
   }
   return session;
 }
