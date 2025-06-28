@@ -8,7 +8,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { trpc } from '@/lib/trpc'
+import { auth } from '@/lib/auth'
 import { useState } from 'react'
 
 interface LoginFormData {
@@ -21,7 +23,8 @@ export const Route = createFileRoute('/login')({
 })
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const {
     register,
@@ -29,19 +32,25 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginFormData>()
 
-  const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true)
+  const loginMutation = trpc.user.loginV1Mutation.useMutation({
+    onSuccess: (data) => {
+      console.log('Login successful:', data)
+      auth.setToken(data.accessToken)
+      // TODO: Redirect to dashboard when it's created
+      // navigate({ to: '/dashboard' })
+      alert('Login successful! Token stored.')
+    },
+    onError: (error) => {
+      setError(error.message)
+    },
+  })
 
-    // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      console.log('Login data:', data)
-      // TODO: Implement actual login logic
-    } catch (error) {
-      console.error('Login failed:', error)
-    } finally {
-      setIsLoading(false)
-    }
+  const onSubmit = async (data: LoginFormData) => {
+    setError(null)
+    loginMutation.mutate({
+      email: data.email,
+      password: data.password,
+    })
   }
 
   return (
@@ -57,12 +66,18 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {error}
+              </div>
+            )}
+
             <Input
               label="Email"
               type="email"
               placeholder="Enter your email"
               error={errors.email?.message}
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               {...register('email', {
                 required: 'Email is required',
                 pattern: {
@@ -77,12 +92,12 @@ export default function LoginPage() {
               type="password"
               placeholder="Enter your password"
               error={errors.password?.message}
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
               {...register('password', {
                 required: 'Password is required',
                 minLength: {
-                  value: 6,
-                  message: 'Password must be at least 6 characters',
+                  value: 8,
+                  message: 'Password must be at least 8 characters',
                 },
               })}
             />
@@ -90,9 +105,9 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              loading={isLoading}
+              loading={loginMutation.isPending}
               loadingText="Signing in..."
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
             >
               Sign In
             </Button>

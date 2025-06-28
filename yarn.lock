@@ -600,7 +600,7 @@
 
 "@hono/node-server@^1.14.4":
   version "1.14.4"
-  resolved "https://registry.npmjs.org/@hono/node-server/-/node-server-1.14.4.tgz"
+  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-1.14.4.tgz#e6c27a8b40ae8fa8e49b58bc4b7554accfb2d298"
   integrity sha512-DnxpshhYewr2q9ZN8ez/M5mmc3sucr8CT1sIgIy1bkeUXut9XWDkqHoFHRhWIQgkYnKpVRxunyhK7WzpJeJ6qQ==
 
 "@hono/trpc-server@^0.4.0":
@@ -956,6 +956,18 @@
   resolved "https://registry.yarnpkg.com/@tanstack/history/-/history-1.121.34.tgz#c11f09d2a0fedd6596a0f89d929d3c17ec4f1130"
   integrity sha512-YL8dGi5ZU+xvtav2boRlw4zrRghkY6hvdcmHhA0RGSJ/CBgzv+cbADW9eYJLx74XMZvIQ1pp6VMbrpXnnM5gHA==
 
+"@tanstack/query-core@5.81.5":
+  version "5.81.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.81.5.tgz#14e0cc778bad8bc11d1cf130709910d8a353bb73"
+  integrity sha512-ZJOgCy/z2qpZXWaj/oxvodDx07XcQa9BF92c0oINjHkoqUPsmm3uG08HpTaviviZ/N9eP1f9CM7mKSEkIo7O1Q==
+
+"@tanstack/react-query@^5.81.5":
+  version "5.81.5"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.81.5.tgz#660dba8bb35f24c4cf3617b299a1e3990a3bb49e"
+  integrity sha512-lOf2KqRRiYWpQT86eeeftAGnjuTR35myTP8MXyvHa81VlomoAWNEd8x5vkcAfQefu0qtYCvyqLropFZqgI2EQw==
+  dependencies:
+    "@tanstack/query-core" "5.81.5"
+
 "@tanstack/react-router-devtools@^1.121.2":
   version "1.122.0"
   resolved "https://registry.yarnpkg.com/@tanstack/react-router-devtools/-/react-router-devtools-1.122.0.tgz#c46929a5f92adcc4b8dfc612b39c988f7a172dcb"
@@ -1082,10 +1094,25 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
+"@trpc/client@^11.4.3":
+  version "11.4.3"
+  resolved "https://registry.yarnpkg.com/@trpc/client/-/client-11.4.3.tgz#0768180ede079f679408f316bbfbcb2bb88f8ba0"
+  integrity sha512-i2suttUCfColktXT8bqex5kHW5jpT15nwUh0hGSDiW1keN621kSUQKcLJ095blqQAUgB+lsmgSqSMmB4L9shQQ==
+
+"@trpc/react-query@^11.4.3":
+  version "11.4.3"
+  resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-11.4.3.tgz#870437cfb8b859d92c7a3164956acab373362555"
+  integrity sha512-z+jhAiOBD22NNhHtvF0iFp9hO36YFA7M8AiUu/XtNmMxyLd3Y9/d1SMjMwlTdnGqxEGPo41VEWBrdhDUGtUuHg==
+
 "@trpc/server@^11.4.2":
   version "11.4.2"
   resolved "https://registry.npmjs.org/@trpc/server/-/server-11.4.2.tgz"
   integrity sha512-THyq/V5bSFDHeWEAk6LqHF0IVTGk6voGwWsFEipzRRKOWWMIZINCsKZ4cISG6kWO2X9jBfMWv/S2o9hnC0zQ0w==
+
+"@trpc/server@^11.4.3":
+  version "11.4.3"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.4.3.tgz#669a964c85a0feab45da51e3ad03f63668dba525"
+  integrity sha512-wnWq3wiLlMOlYkaIZz+qbuYA5udPTLS4GVVRyFkr6aT83xpdCHyVtURT+u4hSoIrOXQM9OPCNXSXsAujWZDdaw==
 
 "@tybys/wasm-util@^0.9.0":
   version "0.9.0"

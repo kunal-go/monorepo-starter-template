@@ -22,6 +22,15 @@ This repository is a **monorepo starter template** using Yarn workspaces, design
 
 ---
 
+## Coding Guidelines
+
+- **TypeScript:** Avoid using interface where using type is possible
+- **Error Handling:** Use try-catch with `mapToTrpcError()` in all tRPC handlers
+- **Validation:** Use zod schemas for input validation
+- **Database:** Use transactions for multi-step operations
+
+---
+
 ## Directory Structure
 
 ```
