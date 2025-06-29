@@ -12,33 +12,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   const navigate = useNavigate()
-
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: (failureCount, error: any) => {
-              // Don't retry on UNAUTHORIZED errors
-              if (error?.data?.code === 'UNAUTHORIZED') {
-                return false
-              }
-              return failureCount < 3
-            },
-          },
-          mutations: {
-            retry: (failureCount, error: any) => {
-              // Don't retry on UNAUTHORIZED errors
-              if (error?.data?.code === 'UNAUTHORIZED') {
-                return false
-              }
-              return failureCount < 3
-            },
-          },
-        },
-      }),
-  )
-
+  const [queryClient] = useState(() => new QueryClient())
   const [trpcClientInstance] = useState(() => trpcClient)
 
   // Register logout callback to redirect to login
