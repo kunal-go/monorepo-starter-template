@@ -1,5 +1,9 @@
 const ACCESS_TOKEN_KEY = 'accessToken'
 
+type LogoutCallback = () => void
+
+let logoutCallbacks: LogoutCallback[] = []
+
 export const auth = {
   getToken: (): string | null => {
     if (typeof window === 'undefined') return null
@@ -18,5 +22,19 @@ export const auth = {
 
   isAuthenticated: (): boolean => {
     return !!auth.getToken()
+  },
+
+  logout: (): void => {
+    auth.removeToken()
+    // Execute all registered logout callbacks
+    logoutCallbacks.forEach((callback) => callback())
+  },
+
+  onLogout: (callback: LogoutCallback): void => {
+    logoutCallbacks.push(callback)
+  },
+
+  removeLogoutCallback: (callback: LogoutCallback): void => {
+    logoutCallbacks = logoutCallbacks.filter((cb) => cb !== callback)
   },
 }

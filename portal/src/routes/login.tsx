@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { trpc } from '@/contracts/trpc'
 import { auth } from '@/lib/auth'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -24,6 +24,7 @@ export const Route = createFileRoute('/login')({
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const {
     register,
@@ -33,11 +34,8 @@ export default function LoginPage() {
 
   const loginMutation = trpc.user.loginV1Mutation.useMutation({
     onSuccess: (data) => {
-      console.log('Login successful:', data)
       auth.setToken(data.accessToken)
-      // TODO: Redirect to dashboard when it's created
-      // navigate({ to: '/dashboard' })
-      alert('Login successful! Token stored.')
+      navigate({ to: '/' })
     },
     onError: (error) => {
       setError(error.message)

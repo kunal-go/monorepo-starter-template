@@ -11,6 +11,18 @@ export const trpcClient = createTRPCClient<AppRouter>({
         const token = auth.getToken()
         return token ? { authorization: `Bearer ${token}` } : {}
       },
+      fetch: async (url, options) => {
+        const response = await fetch(url, options)
+
+        // Check if the response indicates an unauthorized error
+        if (response.status === 401) {
+          console.log('Logging out on unauthorized error')
+          // Auto logout on unauthorized error
+          auth.logout()
+        }
+
+        return response
+      },
     }),
   ],
 })

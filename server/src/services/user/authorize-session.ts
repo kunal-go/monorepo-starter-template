@@ -12,7 +12,7 @@ export async function authorizeSession(sessionId: string) {
   if (!session) {
     throw new UnauthorisedError("Session not found");
   }
-  if (new Date(session.validTill) < new Date()) {
+  if (session.validTill.getTime() < new Date().getTime()) {
     throw new UnauthorisedError("Session expired");
   }
   return session;

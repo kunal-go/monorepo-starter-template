@@ -29,7 +29,7 @@ export async function createUserSession(
     .insert(userSessions)
     .values({
       userId: payload.userId,
-      validTill: getValidity(12, "hour"),
+      validTill: getValidity(12, "minute"),
     })
     .returning();
 

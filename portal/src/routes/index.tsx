@@ -1,10 +1,179 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { auth } from '@/lib/auth'
+import { trpc } from '@/contracts/trpc'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
-    throw redirect({
-      to: '/login',
-    })
+    // Check if access token exists
+    if (!auth.isAuthenticated()) {
+      throw redirect({
+        to: '/login',
+      })
+    }
   },
-  component: () => null,
+  component: IndexPage,
 })
+
+function IndexPage() {
+  const navigate = useNavigate()
+
+  // Fetch user details using trpc
+  const { data: user, isLoading, error } = trpc.user.getSelfV1Query.useQuery()
+
+  // Handle UNAUTHORIZED errors
+  useEffect(() => {
+    if (error?.data?.code === 'UNAUTHORIZED') {
+      auth.logout()
+      navigate({ to: '/login' })
+    }
+  }, [error, navigate])
+
+  const handleLogout = () => {
+    auth.logout()
+    navigate({ to: '/login' })
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading user details...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-xl text-red-600">Error</CardTitle>
+            <CardDescription>
+              Failed to load user details. Please try logging in again.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={handleLogout} className="w-full">
+              Go to Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <Button onClick={handleLogout} variant="outline">
+            Logout
+          </Button>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Profile</CardTitle>
+              <CardDescription>Your account information</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <p className="text-gray-900">{user?.email}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  User ID
+                </label>
+                <p className="text-gray-900 font-mono text-sm">{user?.id}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Verification Status
+                </label>
+                <p className="text-gray-900">
+                  {user?.isVerified ? (
+                    <span className="text-green-600">✓ Verified</span>
+                  ) : (
+                    <span className="text-yellow-600">⚠ Not Verified</span>
+                  )}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Member Since
+                </label>
+                <p className="text-gray-900">
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
+                    : 'N/A'}
+                </p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700">
+                  Last Updated
+                </label>
+                <p className="text-gray-900">
+                  {user?.updatedAt
+                    ? new Date(user.updatedAt).toLocaleDateString()
+                    : 'N/A'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Actions</CardTitle>
+              <CardDescription>Manage your account</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {!user?.isVerified && (
+                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <h3 className="text-sm font-medium text-yellow-800">
+                    Account Verification Required
+                  </h3>
+                  <p className="text-sm text-yellow-700 mt-1">
+                    Please verify your email address to access all features.
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Button className="w-full" variant="outline">
+                  Edit Profile
+                </Button>
+                <Button className="w-full" variant="outline">
+                  Change Password
+                </Button>
+                <Button className="w-full" variant="outline">
+                  Account Settings
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
