@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { trpc } from '@/contracts/trpc'
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'

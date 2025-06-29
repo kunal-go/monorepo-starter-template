@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import { trpc } from '@/contracts/trpc'
 import { trpcClient } from '@/contracts/trpc-client'
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 
 export const Route = createRootRoute({
   component: RootComponent,

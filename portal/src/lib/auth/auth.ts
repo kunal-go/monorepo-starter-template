@@ -1,4 +1,4 @@
-const ACCESS_TOKEN_KEY = 'accessToken'
+import { useAuthStore } from './auth-store'
 
 type LogoutCallback = () => void
 
@@ -8,22 +8,19 @@ let refreshPromise: Promise<{ accessToken: string }> | null = null
 
 export const auth = {
   getToken: (): string | null => {
-    if (typeof window === 'undefined') return null
-    return localStorage.getItem(ACCESS_TOKEN_KEY)
+    return useAuthStore.getState().accessToken
   },
 
   setToken: (token: string): void => {
-    if (typeof window === 'undefined') return
-    localStorage.setItem(ACCESS_TOKEN_KEY, token)
+    useAuthStore.getState().setAccessToken(token)
   },
 
   removeToken: (): void => {
-    if (typeof window === 'undefined') return
-    localStorage.removeItem(ACCESS_TOKEN_KEY)
+    useAuthStore.getState().clearAccessToken()
   },
 
   isAuthenticated: (): boolean => {
-    return !!auth.getToken()
+    return useAuthStore.getState().isAuthenticated()
   },
 
   refreshToken: async (): Promise<{ accessToken: string }> => {
@@ -37,7 +34,7 @@ export const auth = {
       console.log('Refreshing token')
       try {
         // Import env dynamically to avoid circular dependencies
-        const { env } = await import('./env')
+        const { env } = await import('../env')
 
         // Make a direct fetch call to the refresh endpoint
         const response = await fetch(
@@ -90,5 +87,26 @@ export const auth = {
 
   removeLogoutCallback: (callback: LogoutCallback): void => {
     logoutCallbacks = logoutCallbacks.filter((cb) => cb !== callback)
+  },
+
+  // Initialize auth state on app startup
+  initialize: async (): Promise<void> => {
+    const store = useAuthStore.getState()
+
+    // If already initialized, don't do anything
+    if (store.isInitialized) {
+      return
+    }
+
+    // Since tokens are no longer persisted, always try to refresh on startup
+    try {
+      await auth.refreshToken()
+    } catch (error) {
+      console.log('Failed to refresh token on startup:', error)
+      // Don't throw error, just mark as initialized
+    }
+
+    // Mark as initialized
+    store.setInitialized(true)
   },
 }

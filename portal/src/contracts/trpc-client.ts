@@ -1,5 +1,5 @@
 import { createTRPCClient, httpBatchLink } from '@trpc/client'
-import { auth } from '../lib/auth'
+import { auth } from '../lib/auth/auth'
 import { env } from '../lib/env'
 import type { AppRouter } from './trpc'
 
