@@ -1,0 +1,2 @@
+export const SESSION_VALIDITY_IN_DAYS = 7;
+export const ACCESS_TOKEN_VALIDITY_IN_HOURS = 2;

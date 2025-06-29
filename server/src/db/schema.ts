@@ -48,6 +48,8 @@ export const userSessions = pgTable("user_sessions", {
     .references(() => users.id)
     .notNull(),
   validTill: timestamp("valid_till").notNull(),
+  refreshKey: text("refresh_key"),
+  refreshedAt: timestamp("refreshed_at"),
 });
 
 export type UserSession = typeof userSessions.$inferSelect;

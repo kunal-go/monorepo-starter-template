@@ -4,8 +4,8 @@ import { z } from "zod";
 import { ForbiddenError } from "../../../../common/errors";
 import { db } from "../../../../db";
 import { users } from "../../../../db/schema";
-import { createAccessToken } from "../../../../providers/jwt";
 import { createUserSession } from "../../../../services/user/session/create-user-session";
+import { createAndSetTokens } from "../../../helpers/create-tokens";
 import { publicProcedure } from "../../../trpc";
 import { mapToTrpcError } from "../../../utils";
 
@@ -16,7 +16,7 @@ const inputSchema = z.object({
 
 export const loginV1Mutation = publicProcedure
   .input(inputSchema)
-  .mutation(async ({ input }) => {
+  .mutation(async ({ input, ctx }) => {
     try {
       const [user] = await db
         .select()
@@ -26,7 +26,6 @@ export const loginV1Mutation = publicProcedure
       if (!user) {
         throw new ForbiddenError("Invalid email or password");
       }
-
       if (!user.isVerified) {
         throw new ForbiddenError("Invalid email or password");
       }
@@ -42,11 +41,7 @@ export const loginV1Mutation = publicProcedure
       const { session } = await db.transaction(async (tx) => {
         return await createUserSession(tx, { userId: user.id });
       });
-
-      const accessToken = await createAccessToken({
-        sessionId: session.id,
-      });
-      return { accessToken };
+      return await createAndSetTokens({ session, ctx });
     } catch (err) {
       throw mapToTrpcError(err);
     }

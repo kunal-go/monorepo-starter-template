@@ -1,4 +1,6 @@
 import { desc, eq, inArray } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
+import { SESSION_VALIDITY_IN_DAYS } from "../../../common/constant";
 import { getValidity } from "../../../common/utils/date";
 import { WriteTransaction } from "../../../db";
 import { userSessions } from "../../../db/schema";
@@ -29,7 +31,8 @@ export async function createUserSession(
     .insert(userSessions)
     .values({
       userId: payload.userId,
-      validTill: getValidity(12, "minute"),
+      validTill: getValidity(SESSION_VALIDITY_IN_DAYS, "day"),
+      refreshKey: randomUUID(),
     })
     .returning();
 

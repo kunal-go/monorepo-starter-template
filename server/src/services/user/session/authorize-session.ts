@@ -1,7 +1,7 @@
-import { UnauthorisedError } from "../../common/errors";
+import { UnauthorisedError } from "../../../common/errors";
 import { eq } from "drizzle-orm";
-import { db } from "../../db";
-import { userSessions } from "../../db/schema";
+import { db } from "../../../db";
+import { userSessions } from "../../../db/schema";
 
 export async function authorizeSession(sessionId: string) {
   const [session] = await db

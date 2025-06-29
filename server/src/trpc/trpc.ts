@@ -1,10 +1,10 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import { verifyAccessToken } from "../providers/jwt";
-import { authorizeSession } from "../services/user/authorize-session";
+import { initTRPC } from "@trpc/server";
+import { UnauthorisedError } from "../common/errors";
+import { verifyAccessToken } from "../providers/jwt/access-token";
+import { authorizeSession } from "../services/user/session/authorize-session";
 import { Context } from "./context";
 import { rateLimiterMiddleware } from "./middlewares/rate-limiter";
 import { mapToTrpcError } from "./utils";
-import { UnauthorisedError } from "../common/errors";
 
 export const t = initTRPC.context<Context>().create();
 
