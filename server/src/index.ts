@@ -9,8 +9,11 @@ import { cors } from "hono/cors";
 
 const app = new Hono();
 
-app.use("*", cors());
-app.use("/trpc/*", trpcServer({ router: appRouter, createContext }));
+app.use(
+  "/trpc/*",
+  cors({ credentials: true, origin: getEnv("CORS_ORIGIN") }),
+  trpcServer({ router: appRouter, createContext })
+);
 
 await migrateDb();
 

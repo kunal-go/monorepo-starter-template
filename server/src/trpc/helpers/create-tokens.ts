@@ -25,9 +25,9 @@ export async function createAndSetTokens({
   const cookieOptions: string[] = [
     `refreshToken=${refreshToken}`,
     "HttpOnly",
-    "SameSite=None",
-    "Path=/",
+    "Path=/trpc",
     `Max-Age=${maxAge}`,
+    "SameSite=Strict", // CSRF protection
   ];
   if (isProd) {
     cookieOptions.push("Secure");
@@ -38,6 +38,6 @@ export async function createAndSetTokens({
 
   return {
     accessToken,
-    refreshAfter: dayjs(validTill).subtract(5, "minute").toDate(),
+    refreshAfter: dayjs(validTill).subtract(2, "minute").toDate(),
   };
 }

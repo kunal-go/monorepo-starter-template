@@ -23,6 +23,7 @@ export const privateProcedure = t.procedure.use(async ({ ctx, next }) => {
     const token = authHeader.replace("Bearer ", "");
     const payload = await verifyAccessToken(token);
     const session = await authorizeSession(payload.sessionId);
+
     return next({ ctx: { ...ctx, session } });
   } catch (error) {
     throw mapToTrpcError(error);

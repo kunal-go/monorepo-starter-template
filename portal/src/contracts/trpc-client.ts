@@ -9,16 +9,48 @@ export const trpcClient = createTRPCClient<AppRouter>({
       url: `${env.VITE_SERVER_URL}/trpc`,
       headers: () => {
         const token = auth.getToken()
-        return token ? { authorization: `Bearer ${token}` } : {}
+        return token
+          ? { authorization: `Bearer ${token}`, credentials: 'include' }
+          : {}
       },
       fetch: async (url, options) => {
-        const response = await fetch(url, options)
+        const response = await fetch(url, {
+          ...options,
+          credentials: 'include',
+        })
 
-        // Check if the response indicates an unauthorized error
+        // Handle 401 errors with "Access token expired" message
         if (response.status === 401) {
-          console.log('Logging out on unauthorized error')
-          // Auto logout on unauthorized error
-          auth.logout()
+          const responseText = await response.text()
+
+          // Check if the error message indicates token expiration
+          if (responseText.includes('Access token expired')) {
+            try {
+              // Try to refresh the token
+              await auth.refreshToken()
+
+              // Retry the original request with the new token
+              const newToken = auth.getToken()
+              if (newToken && options) {
+                const newOptions = {
+                  ...options,
+                  headers: {
+                    ...options.headers,
+                    authorization: `Bearer ${newToken}`,
+                  },
+                }
+
+                return await fetch(url, {
+                  ...newOptions,
+                  credentials: 'include',
+                })
+              }
+            } catch (refreshError) {
+              // If refresh fails, logout the user
+              console.log('Token refresh failed, logging out')
+              auth.logout()
+            }
+          }
         }
 
         return response

@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
@@ -26,6 +26,7 @@ export const Route = createFileRoute('/')({
 
 function IndexPage() {
   const navigate = useNavigate()
+  const [refreshStatus, setRefreshStatus] = useState<string | null>(null)
 
   // Fetch user details using trpc
   const { data: user, isLoading, error } = trpc.user.getSelfV1Query.useQuery()
@@ -41,6 +42,24 @@ function IndexPage() {
   const handleLogout = () => {
     auth.logout()
     navigate({ to: '/login' })
+  }
+
+  const handleRefreshToken = async () => {
+    setRefreshStatus('Refreshing...')
+    try {
+      const result = await auth.refreshToken()
+      setRefreshStatus(
+        `Token refreshed successfully! New token: ${result.accessToken.substring(0, 20)}...`,
+      )
+      // Clear status after 3 seconds
+      setTimeout(() => setRefreshStatus(null), 3000)
+    } catch (error) {
+      setRefreshStatus(
+        `Refresh failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      )
+      // Clear status after 5 seconds
+      setTimeout(() => setRefreshStatus(null), 5000)
+    }
   }
 
   if (isLoading) {
@@ -159,7 +178,31 @@ function IndexPage() {
                 </div>
               )}
 
+              {refreshStatus && (
+                <div
+                  className={`p-3 text-sm rounded-md ${
+                    refreshStatus.includes('successfully')
+                      ? 'text-green-700 bg-green-50 border border-green-200'
+                      : refreshStatus.includes('Refreshing')
+                        ? 'text-blue-700 bg-blue-50 border border-blue-200'
+                        : 'text-red-700 bg-red-50 border border-red-200'
+                  }`}
+                >
+                  {refreshStatus}
+                </div>
+              )}
+
               <div className="space-y-2">
+                <Button
+                  onClick={handleRefreshToken}
+                  className="w-full"
+                  variant="outline"
+                  disabled={refreshStatus?.includes('Refreshing')}
+                >
+                  {refreshStatus?.includes('Refreshing')
+                    ? 'Refreshing...'
+                    : 'Refresh Token'}
+                </Button>
                 <Button className="w-full" variant="outline">
                   Edit Profile
                 </Button>

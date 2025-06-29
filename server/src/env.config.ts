@@ -6,6 +6,8 @@ const envSchema = z.object({
   PORT: z.coerce.number(),
   TZ: z.string(),
 
+  CORS_ORIGIN: z.string(),
+
   DB_HOST: z.string(),
   DB_PORT: z.coerce.number(),
   DB_USERNAME: z.string(),

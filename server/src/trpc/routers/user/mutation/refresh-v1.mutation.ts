@@ -20,6 +20,7 @@ export const refreshV1Mutation = publicProcedure
         ?.split(";")
         .find((cookie) => cookie.trim().startsWith("refreshToken="))
         ?.split("=")[1];
+
       if (!refreshToken) {
         await deleteExpiredUserSessions();
         throw new UnauthorisedError("Refresh token not found");
