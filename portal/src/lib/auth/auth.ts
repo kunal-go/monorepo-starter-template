@@ -64,7 +64,7 @@ export const auth = {
         }
       } catch (error) {
         // If refresh fails, logout the user
-        auth.logout()
+        await auth.logout()
         reject(error)
       } finally {
         isRefreshing = false
@@ -75,8 +75,40 @@ export const auth = {
     return refreshPromise
   },
 
-  logout: (): void => {
+  serverLogout: async (): Promise<void> => {
+    try {
+      // Import env dynamically to avoid circular dependencies
+      const { env } = await import('../env')
+
+      // Call the logout mutation
+      const response = await fetch(
+        `${env.VITE_SERVER_URL}/trpc/user.logoutV1Mutation`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for refresh token
+          body: JSON.stringify({}),
+        },
+      )
+
+      if (!response.ok) {
+        console.warn('Server logout failed, but continuing with local logout')
+      }
+    } catch (error) {
+      console.warn('Server logout error:', error)
+      // Continue with local logout even if server logout fails
+    }
+  },
+
+  logout: async (): Promise<void> => {
+    // First, try to logout on the server
+    await auth.serverLogout()
+
+    // Then, clear local state
     auth.removeToken()
+
     // Execute all registered logout callbacks
     logoutCallbacks.forEach((callback) => callback())
   },

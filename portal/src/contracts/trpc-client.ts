@@ -48,7 +48,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
             } catch (refreshError) {
               // If refresh fails, logout the user
               console.log('Token refresh failed, logging out')
-              auth.logout()
+              await auth.logout()
             }
           }
         }

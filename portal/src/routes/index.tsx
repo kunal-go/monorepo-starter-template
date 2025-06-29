@@ -1,5 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { auth } from '@/lib/auth/auth'
+import { useAuth } from '@/lib/auth/use-auth'
 import { trpc } from '@/contracts/trpc'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +27,7 @@ export const Route = createFileRoute('/')({
 
 function IndexPage() {
   const navigate = useNavigate()
+  const { logout, isLoggingOut } = useAuth()
   const [refreshStatus, setRefreshStatus] = useState<string | null>(null)
 
   // Fetch user details using trpc
@@ -39,9 +41,15 @@ function IndexPage() {
     }
   }, [error, navigate])
 
-  const handleLogout = () => {
-    auth.logout()
-    navigate({ to: '/login' })
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate({ to: '/login' })
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Even if logout fails, redirect to login
+      navigate({ to: '/login' })
+    }
   }
 
   const handleRefreshToken = async () => {
@@ -88,8 +96,12 @@ function IndexPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleLogout} className="w-full">
-              Go to Login
+            <Button
+              onClick={handleLogout}
+              className="w-full"
+              disabled={isLoggingOut}
+            >
+              {isLoggingOut ? 'Logging out...' : 'Go to Login'}
             </Button>
           </CardContent>
         </Card>
@@ -102,8 +114,12 @@ function IndexPage() {
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
           </Button>
         </div>
 
