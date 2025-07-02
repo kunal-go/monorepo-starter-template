@@ -1,7 +1,10 @@
 import { eq } from "drizzle-orm";
-import { db } from "../../../db";
+import { WriteTransaction } from "../../../db";
 import { userSessions } from "../../../db/schema";
 
-export async function deleteUserSession(sessionId: string) {
-  await db.delete(userSessions).where(eq(userSessions.id, sessionId));
+export async function deleteUserSession(
+  tx: WriteTransaction,
+  sessionId: string
+) {
+  await tx.delete(userSessions).where(eq(userSessions.id, sessionId));
 }

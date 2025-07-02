@@ -1,10 +1,10 @@
-import { UnauthorisedError } from "../../../common/errors";
 import { eq } from "drizzle-orm";
-import { db } from "../../../db";
+import { UnauthorisedError } from "../../../common/errors";
+import { ReadTransaction } from "../../../db";
 import { userSessions } from "../../../db/schema";
 
-export async function authorizeSession(sessionId: string) {
-  const [session] = await db
+export async function authorizeSession(tx: ReadTransaction, sessionId: string) {
+  const [session] = await tx
     .select()
     .from(userSessions)
     .where(eq(userSessions.id, sessionId));

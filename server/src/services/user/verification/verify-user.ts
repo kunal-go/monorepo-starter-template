@@ -4,7 +4,7 @@ import {
 } from "../../../common/errors";
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
-import { WriteTransaction } from "../../../db";
+import { getDb, WriteTransaction } from "../../../db";
 import { users, verificationRequests } from "../../../db/schema";
 import { deleteUnverifiedUsers } from "../delete-unverified-users";
 
@@ -12,7 +12,7 @@ export async function verifyUser(
   tx: WriteTransaction,
   payload: { requestId: string; otp: string }
 ) {
-  await deleteUnverifiedUsers();
+  await getDb().writeTx(deleteUnverifiedUsers);
 
   const [request] = await tx
     .select()

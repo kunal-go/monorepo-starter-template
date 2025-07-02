@@ -1,5 +1,5 @@
 import { hash } from "bcrypt";
-import { WriteTransaction } from "../../db";
+import { getDb, WriteTransaction } from "../../db";
 import { users } from "../../db/schema";
 import { getEnv } from "../../env.config";
 import { checkUserEmailAvailability } from "./check-user-email-availability";
@@ -10,7 +10,7 @@ export async function createUser(
   tx: WriteTransaction,
   payload: { email: string; password: string }
 ) {
-  await deleteUnverifiedUsers();
+  await getDb().writeTx(deleteUnverifiedUsers);
   await checkUserEmailAvailability(tx, { email: payload.email });
 
   const isInsider = getEnv("SEED_INSIDER_EMAIL") === payload.email;

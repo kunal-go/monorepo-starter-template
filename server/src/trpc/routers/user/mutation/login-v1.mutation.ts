@@ -1,9 +1,8 @@
 import { compare } from "bcrypt";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { ForbiddenError } from "../../../../common/errors";
-import { db } from "../../../../db";
-import { users } from "../../../../db/schema";
+import { getDb } from "../../../../db";
+import { getUserByEmail } from "../../../../services/user/get-user-by-email";
 import { createUserSession } from "../../../../services/user/session/create-user-session";
 import { createAndSetTokens } from "../../../helpers/create-tokens";
 import { publicProcedure } from "../../../trpc";
@@ -18,11 +17,9 @@ export const loginV1Mutation = publicProcedure
   .input(inputSchema)
   .mutation(async ({ input, ctx }) => {
     try {
-      const [user] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, input.email));
+      const { readTx, writeTx } = getDb();
 
+      const user = await getUserByEmail(readTx, input.email);
       if (!user) {
         throw new ForbiddenError("Invalid email or password");
       }
@@ -38,9 +35,10 @@ export const loginV1Mutation = publicProcedure
         throw new ForbiddenError("Invalid email or password");
       }
 
-      const { session } = await db.transaction(async (tx) => {
+      const { session } = await writeTx(async (tx) => {
         return await createUserSession(tx, { userId: user.id });
       });
+
       return await createAndSetTokens({ session, ctx });
     } catch (err) {
       throw mapToTrpcError(err);
