@@ -12,6 +12,9 @@ import {
 } from '@/components/ui/card'
 import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { Modal } from '@/components/ui/modal'
+import { useForm } from 'react-hook-form'
+import { Input } from '@/components/ui/input'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
@@ -29,6 +32,43 @@ function IndexPage() {
   const navigate = useNavigate()
   const { logout, isLoggingOut } = useAuth()
   const [refreshStatus, setRefreshStatus] = useState<string | null>(null)
+  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false)
+  const [changePasswordSuccess, setChangePasswordSuccess] = useState<
+    string | null
+  >(null)
+  const [changePasswordError, setChangePasswordError] = useState<string | null>(
+    null,
+  )
+  const {
+    register: registerChangePassword,
+    handleSubmit: handleChangePasswordSubmit,
+    formState: { errors: changePasswordErrors },
+    reset: resetChangePassword,
+    watch: watchChangePassword,
+  } = useForm({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+  })
+  const changePasswordMutation = trpc.user.changePasswordV1Mutation.useMutation(
+    {
+      onSuccess: () => {
+        setChangePasswordSuccess('Password updated successfully!')
+        setChangePasswordError(null)
+        resetChangePassword()
+        setTimeout(() => {
+          setChangePasswordSuccess(null)
+          setChangePasswordOpen(false)
+        }, 1500)
+      },
+      onError: (err) => {
+        setChangePasswordError(err.message)
+        setChangePasswordSuccess(null)
+      },
+    },
+  )
 
   // Fetch user details using trpc
   const { data: user, isLoading, error } = trpc.user.getSelfV1Query.useQuery()
@@ -68,6 +108,19 @@ function IndexPage() {
       // Clear status after 5 seconds
       setTimeout(() => setRefreshStatus(null), 5000)
     }
+  }
+
+  const onChangePasswordSubmit = (data: any) => {
+    setChangePasswordError(null)
+    setChangePasswordSuccess(null)
+    if (data.newPassword !== data.confirmNewPassword) {
+      setChangePasswordError('New passwords do not match')
+      return
+    }
+    changePasswordMutation.mutate({
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+    })
   }
 
   if (isLoading) {
@@ -222,7 +275,11 @@ function IndexPage() {
                 <Button className="w-full" variant="outline">
                   Edit Profile
                 </Button>
-                <Button className="w-full" variant="outline">
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={() => setChangePasswordOpen(true)}
+                >
                   Change Password
                 </Button>
                 <Button className="w-full" variant="outline">
@@ -232,6 +289,82 @@ function IndexPage() {
             </CardContent>
           </Card>
         </div>
+        <Modal
+          open={isChangePasswordOpen}
+          onOpenChange={setChangePasswordOpen}
+          title="Change Password"
+          description="Update your account password"
+        >
+          <form
+            onSubmit={handleChangePasswordSubmit(onChangePasswordSubmit)}
+            className="space-y-4"
+          >
+            {changePasswordSuccess && (
+              <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md">
+                {changePasswordSuccess}
+              </div>
+            )}
+            {changePasswordError && (
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                {changePasswordError}
+              </div>
+            )}
+            <Input
+              label="Current Password"
+              type="password"
+              placeholder="Enter your current password"
+              error={changePasswordErrors.currentPassword?.message}
+              disabled={changePasswordMutation.isPending}
+              {...registerChangePassword('currentPassword', {
+                required: 'Current password is required',
+                minLength: {
+                  value: 8,
+                  message: 'Password must be at least 8 characters',
+                },
+              })}
+            />
+            <Input
+              label="New Password"
+              type="password"
+              placeholder="Enter your new password"
+              error={changePasswordErrors.newPassword?.message}
+              disabled={changePasswordMutation.isPending}
+              {...registerChangePassword('newPassword', {
+                required: 'New password is required',
+                minLength: {
+                  value: 8,
+                  message: 'Password must be at least 8 characters',
+                },
+              })}
+            />
+            <Input
+              label="Confirm New Password"
+              type="password"
+              placeholder="Re-enter your new password"
+              error={changePasswordErrors.confirmNewPassword?.message}
+              disabled={changePasswordMutation.isPending}
+              {...registerChangePassword('confirmNewPassword', {
+                required: 'Please confirm your new password',
+                minLength: {
+                  value: 8,
+                  message: 'Password must be at least 8 characters',
+                },
+                validate: (value) =>
+                  value === watchChangePassword('newPassword') ||
+                  'Passwords do not match',
+              })}
+            />
+            <Button
+              type="submit"
+              className="w-full"
+              loading={changePasswordMutation.isPending}
+              loadingText="Updating..."
+              disabled={changePasswordMutation.isPending}
+            >
+              Update Password
+            </Button>
+          </form>
+        </Modal>
       </div>
     </div>
   )

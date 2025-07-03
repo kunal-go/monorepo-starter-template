@@ -7,9 +7,7 @@ import { toUserV1Dto } from "../dto/user-v1.dto";
 
 export const getSelfV1Query = privateProcedure.query(async ({ ctx }) => {
   try {
-    const { readTx } = getDb();
-
-    const user = await getUserById(readTx, ctx.session.userId);
+    const user = await getUserById(getDb().readTx, ctx.session.userId);
     if (!user) {
       throw new NotFoundError("User not found");
     }

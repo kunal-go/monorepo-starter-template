@@ -5,6 +5,7 @@ import { refreshV1Mutation } from "./mutation/refresh-v1.mutation";
 import { registerV1Mutation } from "./mutation/register-v1.mutation";
 import { verifyV1Mutation } from "./mutation/verify-v1.mutation";
 import { getSelfV1Query } from "./queries/get-self-v1.query";
+import { changePasswordV1Mutation } from "./mutation/change-password-v1.mutation";
 
 export const userRouter = createTRPCRouter({
   registerV1Mutation,
@@ -13,4 +14,5 @@ export const userRouter = createTRPCRouter({
   refreshV1Mutation,
   logoutV1Mutation,
   getSelfV1Query,
+  changePasswordV1Mutation,
 });
