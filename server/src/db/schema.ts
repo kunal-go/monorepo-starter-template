@@ -17,6 +17,7 @@ export type User = typeof users.$inferSelect;
 export const usersRelations = relations(users, ({ one, many }) => ({
   verificationRequest: one(verificationRequests),
   userSessions: many(userSessions),
+  resetPasswordRequests: many(resetPasswordRequests),
 }));
 
 export const verificationRequests = pgTable("verification_requests", {
@@ -60,3 +61,26 @@ export const userSessionsRelations = relations(userSessions, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const resetPasswordRequests = pgTable("reset_password_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+  newPasswordHash: text("new_password_hash").notNull(),
+  otpHash: text("otp_hash").notNull(),
+  validTill: timestamp("valid_till").notNull(),
+});
+
+export type ResetPasswordRequest = typeof resetPasswordRequests.$inferSelect;
+
+export const resetPasswordRequestsRelations = relations(
+  resetPasswordRequests,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [resetPasswordRequests.userId],
+      references: [users.id],
+    }),
+  })
+);
