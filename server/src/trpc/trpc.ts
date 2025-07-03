@@ -1,5 +1,6 @@
 import { initTRPC } from "@trpc/server";
 import { UnauthorisedError } from "../common/errors";
+import { getDb } from "../db";
 import { verifyAccessToken } from "../providers/jwt/access-token";
 import { authorizeSession } from "../services/user/session/authorize-session";
 import { Context } from "./context";
@@ -22,7 +23,7 @@ export const privateProcedure = t.procedure.use(async ({ ctx, next }) => {
 
     const token = authHeader.replace("Bearer ", "");
     const payload = await verifyAccessToken(token);
-    const session = await authorizeSession(payload.sessionId);
+    const session = await authorizeSession(getDb().readTx, payload.sessionId);
 
     return next({ ctx: { ...ctx, session } });
   } catch (error) {
