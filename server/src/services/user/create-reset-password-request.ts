@@ -9,16 +9,10 @@ import { ResetPasswordRequest, resetPasswordRequests } from "../../db/schema";
 import { sendResetPasswordOtpEmail } from "../email/send-reset-password-email";
 import { getUserByEmail } from "./get-user-by-email";
 
-interface CreateResetPasswordRequestInput {
-  email: string;
-  newPassword: string;
-}
-
 export async function createResetPasswordRequest(
   tx: WriteTransaction,
-  { email, newPassword }: CreateResetPasswordRequestInput
+  { email, newPassword }: { email: string; newPassword: string }
 ) {
-  // Fetch user to get email
   const user = await getUserByEmail(tx, email);
   if (!user) {
     throw new UnprocessableEntityError("User not found");
