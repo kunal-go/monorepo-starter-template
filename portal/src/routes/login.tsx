@@ -9,7 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { trpc } from '@/contracts/trpc'
 import { auth } from '@/lib/auth/auth'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -109,6 +109,14 @@ export default function LoginPage() {
               Sign In
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <Link
+              to="/reset-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

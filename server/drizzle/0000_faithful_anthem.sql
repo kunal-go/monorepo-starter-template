@@ -1,8 +1,19 @@
+CREATE TABLE "reset_password_requests" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"new_password_hash" text NOT NULL,
+	"otp_hash" text NOT NULL,
+	"valid_till" timestamp NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "user_sessions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" uuid NOT NULL,
-	"valid_till" timestamp NOT NULL
+	"valid_till" timestamp NOT NULL,
+	"refresh_key" text,
+	"refreshed_at" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
@@ -25,5 +36,6 @@ CREATE TABLE "verification_requests" (
 	"valid_till" timestamp NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "reset_password_requests" ADD CONSTRAINT "reset_password_requests_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_sessions" ADD CONSTRAINT "user_sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "verification_requests" ADD CONSTRAINT "verification_requests_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;
