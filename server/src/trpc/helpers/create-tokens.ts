@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { SESSION_VALIDITY_IN_DAYS } from "../../common/constant";
-import { UserSession } from "../../db/schema";
+import { UserSession } from "../../db/schema/schema";
 import { getEnv } from "../../env.config";
 import { createAccessToken, createRefreshToken } from "../../providers/jwt";
 

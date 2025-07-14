@@ -5,7 +5,10 @@ import { UnprocessableEntityError } from "../../common/errors";
 import { getValidity } from "../../common/utils/date";
 import { generateOtpCode } from "../../common/utils/otp";
 import { WriteTransaction } from "../../db";
-import { ResetPasswordRequest, resetPasswordRequests } from "../../db/schema";
+import {
+  ResetPasswordRequest,
+  resetPasswordRequests,
+} from "../../db/schema/schema";
 import { sendResetPasswordOtpEmail } from "../email/send-reset-password-email";
 import { getUserByEmail } from "./get-user-by-email";
 

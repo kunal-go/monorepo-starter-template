@@ -1,6 +1,6 @@
 import { and, eq, lt, notInArray } from "drizzle-orm";
 import { WriteTransaction } from "../../db";
-import { users, verificationRequests } from "../../db/schema";
+import { users, verificationRequests } from "../../db/schema/schema";
 
 export async function deleteUnverifiedUsers(tx: WriteTransaction) {
   await tx

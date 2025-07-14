@@ -1,4 +1,4 @@
-import { User } from "../../../../db/schema";
+import { User } from "../../../../db/schema/schema";
 
 export type UserV1Dto = {
   id: string;

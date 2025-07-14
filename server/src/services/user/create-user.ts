@@ -1,6 +1,6 @@
 import { hash } from "bcrypt";
 import { getDb, WriteTransaction } from "../../db";
-import { users } from "../../db/schema";
+import { users } from "../../db/schema/schema";
 import { getEnv } from "../../env.config";
 import { checkUserEmailAvailability } from "./check-user-email-availability";
 import { deleteUnverifiedUsers } from "./delete-unverified-users";

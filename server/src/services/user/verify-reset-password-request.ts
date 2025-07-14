@@ -2,7 +2,7 @@ import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import { BadRequestError, UnprocessableEntityError } from "../../common/errors";
 import { getDb, WriteTransaction } from "../../db";
-import { resetPasswordRequests, users } from "../../db/schema";
+import { resetPasswordRequests, users } from "../../db/schema/schema";
 import { deleteExpiredResetPasswordRequests } from "./delete-expired-reset-password-requests";
 
 export async function verifyResetPasswordRequest(

@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { WriteTransaction } from "../../db";
-import { users } from "../../db/schema";
+import { users } from "../../db/schema/schema";
 import { getUserById } from "./get-user-by-id";
 import { ForbiddenError } from "../../common/errors";
 import { eq } from "drizzle-orm";

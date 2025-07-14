@@ -5,7 +5,7 @@ import {
 import { compare } from "bcrypt";
 import { eq } from "drizzle-orm";
 import { getDb, WriteTransaction } from "../../../db";
-import { users, verificationRequests } from "../../../db/schema";
+import { users, verificationRequests } from "../../../db/schema/schema";
 import { deleteUnverifiedUsers } from "../delete-unverified-users";
 
 export async function verifyUser(

@@ -12,7 +12,10 @@
     "types": ["node"],
     "outDir": "./dist",
     "skipLibCheck": true,
-    "composite": true
+    "composite": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["node_modules"]
 }

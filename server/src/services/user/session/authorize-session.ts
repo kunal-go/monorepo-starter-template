@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { UnauthorisedError } from "../../../common/errors";
 import { ReadTransaction } from "../../../db";
-import { userSessions } from "../../../db/schema";
+import { userSessions } from "../../../db/schema/schema";
 
 export async function authorizeSession(tx: ReadTransaction, sessionId: string) {
   const [session] = await tx

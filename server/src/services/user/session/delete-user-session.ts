@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { WriteTransaction } from "../../../db";
-import { userSessions } from "../../../db/schema";
+import { userSessions } from "../../../db/schema/schema";
 
 export async function deleteUserSession(
   tx: WriteTransaction,

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { SESSION_VALIDITY_IN_DAYS } from "../../../common/constant";
 import { getValidity } from "../../../common/utils/date";
 import { getDb, WriteTransaction } from "../../../db";
-import { userSessions } from "../../../db/schema";
+import { userSessions } from "../../../db/schema/schema";
 import { deleteExpiredUserSessions } from "./delete-expired-user-sessions";
 
 export async function createUserSession(

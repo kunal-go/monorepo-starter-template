@@ -23,6 +23,7 @@ const envSchema = z.object({
   FROM_EMAIL_NAME: z.string(),
 
   JWT_SECRET: z.string(),
+  BETTER_AUTH_SECRET: z.string(),
 });
 
 type EnvVar = z.infer<typeof envSchema>;

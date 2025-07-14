@@ -1,7 +1,7 @@
 import { UnprocessableEntityError } from "../../common/errors";
 import { count, eq } from "drizzle-orm";
 import { ReadTransaction } from "../../db";
-import { users } from "../../db/schema";
+import { users } from "../../db/schema/schema";
 
 export async function checkUserEmailAvailability(
   tx: ReadTransaction,

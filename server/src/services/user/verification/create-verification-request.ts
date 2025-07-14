@@ -2,7 +2,7 @@ import { hash } from "bcrypt";
 import { getValidity } from "../../../common/utils/date";
 import { generateOtpCode } from "../../../common/utils/otp";
 import { WriteTransaction } from "../../../db";
-import { User, verificationRequests } from "../../../db/schema";
+import { User, verificationRequests } from "../../../db/schema/schema";
 import { sentOtpEmail } from "../../email/send-otp-email";
 
 export async function createVerificationRequest(

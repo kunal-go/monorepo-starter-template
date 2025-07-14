@@ -1,6 +1,6 @@
 import { lt } from "drizzle-orm";
 import { WriteTransaction } from "../../db";
-import { resetPasswordRequests } from "../../db/schema";
+import { resetPasswordRequests } from "../../db/schema/schema";
 
 export async function deleteExpiredResetPasswordRequests(tx: WriteTransaction) {
   await tx

@@ -1,13 +1,21 @@
+import { auth } from "@/lib/auth";
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { migrateDb } from "./db";
 import { getEnv } from "./env.config";
 import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/routers";
-import { cors } from "hono/cors";
 
 const app = new Hono();
+
+app.on(
+  ["POST", "GET", "OPTIONS"],
+  "/api/auth/**",
+  cors({ credentials: true, origin: getEnv("CORS_ORIGIN") }),
+  (c) => auth.handler(c.req.raw)
+);
 
 app.use(
   "/trpc/*",

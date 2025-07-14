@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { SESSION_VALIDITY_IN_DAYS } from "../../../common/constant";
 import { getValidity } from "../../../common/utils/date";
 import { WriteTransaction } from "../../../db";
-import { userSessions } from "../../../db/schema";
+import { userSessions } from "../../../db/schema/schema";
 
 export async function refreshUserSession(
   tx: WriteTransaction,
